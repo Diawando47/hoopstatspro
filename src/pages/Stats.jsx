@@ -5,13 +5,13 @@ import { usePlayers, useAllStats, calcPlayerAvg } from '../hooks/useStats'
 import Avatar from '../components/ui/Avatar'
 
 const TABS = [
-  { key: 'points',   label: 'Points' },
-  { key: 'rebounds', label: 'Rebonds' },
-  { key: 'assists',  label: 'Passes' },
+  { key: 'points',   label: 'Points'        },
+  { key: 'rebounds', label: 'Rebonds'       },
+  { key: 'assists',  label: 'Passes'        },
   { key: 'steals',   label: 'Interceptions' },
 ]
 
-const MEDAL = (i) => {
+const medalColor = (i) => {
   if (i === 0) return 'var(--gold)'
   if (i === 1) return '#bdc3c7'
   if (i === 2) return '#cd7f32'
@@ -23,15 +23,16 @@ export default function Stats() {
   const players  = usePlayers()
   const allStats = useAllStats()
 
-  const ranked = useMemo(() => {
-    return players
+  const ranked = useMemo(() =>
+    players
       .map(p => ({
         ...p,
         avg: calcPlayerAvg(allStats.filter(s => s.playerId === p.id)),
       }))
       .filter(p => p.avg)
-      .sort((a, b) => parseFloat(b.avg[statsTab]) - parseFloat(a.avg[statsTab]))
-  }, [players, allStats, statsTab])
+      .sort((a, b) => parseFloat(b.avg[statsTab]) - parseFloat(a.avg[statsTab])),
+    [players, allStats, statsTab]
+  )
 
   const maxVal = ranked.length ? parseFloat(ranked[0].avg[statsTab]) : 1
 
@@ -39,9 +40,9 @@ export default function Stats() {
     <>
       <div className="page-header">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="page-title">Statistiques <span>Saison</span></div>
+          <div className="page-title">Stats <span>Saison</span></div>
           <div className="page-sub">
-            Moyennes cumulées · {ranked.length} joueur{ranked.length > 1 ? 's' : ''} avec stats
+            Moyennes · {ranked.length} joueur{ranked.length > 1 ? 's' : ''} avec stats
           </div>
         </motion.div>
       </div>
@@ -72,14 +73,17 @@ export default function Stats() {
                   <th>AST</th>
                   <th>STL</th>
                   <th>Matchs</th>
-                  <th>Performance</th>
+                  <th>Perf.</th>
                 </tr>
               </thead>
               <tbody>
                 {ranked.length === 0 && (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: 'center', color: 'var(--muted)', padding: 40 }}>
-                      Aucune statistique enregistrée pour le moment.
+                    <td
+                      colSpan={9}
+                      style={{ textAlign: 'center', color: 'var(--muted)', padding: 40 }}
+                    >
+                      Aucune statistique enregistrée.
                     </td>
                   </tr>
                 )}
@@ -87,14 +91,14 @@ export default function Stats() {
                   <motion.tr
                     key={p.id}
                     initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: 1, x: 0  }}
                     transition={{ delay: i * 0.04 }}
                   >
                     <td>
                       <div style={{
                         fontFamily: 'var(--font-display)',
                         fontSize: 22, fontWeight: 900,
-                        color: MEDAL(i),
+                        color: medalColor(i),
                       }}>
                         {i + 1}
                       </div>
@@ -108,9 +112,7 @@ export default function Stats() {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span className="badge badge-pos">{p.pos}</span>
-                    </td>
+                    <td><span className="badge badge-pos">{p.pos}</span></td>
                     <td style={{
                       fontFamily: 'var(--font-display)',
                       fontSize: 18, fontWeight: 800,
@@ -123,16 +125,19 @@ export default function Stats() {
                     <td>{p.avg.steals}</td>
                     <td style={{ color: 'var(--muted)' }}>{p.avg.games}</td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div className="progress-bar" style={{ width: 90 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div className="progress-bar" style={{ width: 70 }}>
                           <div
                             className="progress-fill"
                             style={{
-                              width: `${Math.min(parseFloat(p.avg[statsTab]) / maxVal * 100, 100)}%`,
+                              width: `${Math.min(
+                                parseFloat(p.avg[statsTab]) / maxVal * 100,
+                                100
+                              )}%`,
                             }}
                           />
                         </div>
-                        <span style={{ fontSize: 12, color: 'var(--muted)', minWidth: 36 }}>
+                        <span style={{ fontSize: 11, color: 'var(--muted)', minWidth: 30 }}>
                           {p.avg[statsTab]}/m
                         </span>
                       </div>

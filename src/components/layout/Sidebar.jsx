@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Trophy, Users, BarChart2, FileText, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useUIStore } from '../../store/useStore'
+import {
+  LayoutDashboard, Trophy, Users,
+  BarChart2, FileText, ChevronLeft, ChevronRight
+} from 'lucide-react'
 
 const NAV = [
   { section: 'Principal' },
@@ -10,44 +13,48 @@ const NAV = [
   { to: '/players', icon: Users,           label: 'Joueurs' },
   { to: '/stats',   icon: BarChart2,       label: 'Statistiques' },
   { section: 'Analyse' },
-  { to: '/reports', icon: FileText,        label: 'Rapports', badge: 'IA' },
+  { to: '/reports', icon: FileText,        label: 'Rapports',     badge: 'IA' },
 ]
 
 export default function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUIStore()
-  const w = sidebarOpen ? 220 : 64
 
   return (
     <aside style={{
-      width: w,
-      minWidth: w,
+      width: sidebarOpen ? 'var(--sidebar-w)' : 'var(--sidebar-w-collapsed)',
+      minWidth: sidebarOpen ? 'var(--sidebar-w)' : 'var(--sidebar-w-collapsed)',
       background: 'var(--panel)',
       borderRight: '1px solid var(--border)',
       display: 'flex',
       flexDirection: 'column',
       transition: 'width .2s, min-width .2s',
       overflow: 'hidden',
-      position: 'relative',
+      position: 'sticky',
+      top: 0,
+      height: '100vh',
       zIndex: 10,
     }}>
+
       {/* Logo */}
       <div style={{
         padding: '20px 16px 16px',
         borderBottom: '1px solid var(--border)',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
+        flexShrink: 0,
       }}>
         {sidebarOpen ? (
           <>
             <div style={{
               fontFamily: 'var(--font-display)',
               fontSize: 26, fontWeight: 900, letterSpacing: 1, lineHeight: 1,
+              color: 'var(--text)',
             }}>
               HOOP<span style={{ color: 'var(--orange)' }}>STATS</span>
             </div>
             <div style={{
               fontSize: 10, fontWeight: 500, color: 'var(--muted)',
-              letterSpacing: 3, textTransform: 'uppercase', marginTop: 2,
+              letterSpacing: 3, textTransform: 'uppercase', marginTop: 3,
             }}>
               Pro Analytics
             </div>
@@ -57,21 +64,22 @@ export default function Sidebar() {
             fontFamily: 'var(--font-display)',
             fontSize: 20, fontWeight: 900,
             color: 'var(--orange)', textAlign: 'center',
+            lineHeight: 1,
           }}>
             🏀
           </div>
         )}
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '12px 0', overflowY: 'auto', overflowX: 'hidden' }}>
+      {/* Nav items */}
+      <nav style={{ flex: 1, padding: '10px 0', overflowY: 'auto', overflowX: 'hidden' }}>
         {NAV.map((item, i) => {
           // Section header
           if (item.section) {
             return sidebarOpen ? (
               <div key={i} style={{
-                padding: '8px 16px 4px',
-                fontSize: 10, fontWeight: 600,
+                padding: '8px 16px 3px',
+                fontSize: 10, fontWeight: 700,
                 color: 'var(--muted)',
                 letterSpacing: 2,
                 textTransform: 'uppercase',
@@ -79,7 +87,7 @@ export default function Sidebar() {
               }}>
                 {item.section}
               </div>
-            ) : <div key={i} style={{ height: 8 }} />
+            ) : <div key={i} style={{ height: 6 }} />
           }
 
           const Icon = item.icon
@@ -102,6 +110,7 @@ export default function Sidebar() {
                 transition: 'all .15s',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
+                minHeight: 40,
               })}
             >
               {({ isActive }) => (
@@ -130,7 +139,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Collapse button */}
-      <div style={{ padding: '12px', borderTop: '1px solid var(--border)' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
         <button
           onClick={toggleSidebar}
           className="btn btn-ghost btn-sm"

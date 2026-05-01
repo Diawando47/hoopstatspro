@@ -6,66 +6,41 @@ import { format } from 'date-fns'
 export default function MatchForm() {
   const { closeModal } = useUIStore()
   const { show }       = useToastStore()
-  const today = format(new Date(), 'yyyy-MM-dd')
-
   const [form, setForm] = useState({
-    teamA: 'Bulls FC', teamB: '',
-    scoreA: '', scoreB: '',
-    date: today, lieu: '',
+    teamA: '', teamB: '', scoreA: '', scoreB: '',
+    date: format(new Date(), 'yyyy-MM-dd'), lieu: '',
   })
   const [loading, setLoading] = useState(false)
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
-  async function handleSubmit() {
-    if (!form.teamB.trim()) { alert("Renseignez l'équipe adversaire"); return }
+  async function submit() {
+    if (!form.teamA.trim() || !form.teamB.trim()) { alert("Renseignez les deux équipes"); return }
     setLoading(true)
     await db.matches.add({
-      teamA:  form.teamA.trim() || 'Bulls FC',
+      teamA:  form.teamA.trim(),
       teamB:  form.teamB.trim(),
       scoreA: parseInt(form.scoreA) || 0,
       scoreB: parseInt(form.scoreB) || 0,
       date:   form.date,
       lieu:   form.lieu.trim() || 'Salle locale',
     })
-    setLoading(false)
-    closeModal()
-    show('✅ Match enregistré !')
+    setLoading(false); closeModal(); show('✅ Match enregistré !')
   }
 
   return (
     <>
       <div className="modal-title">🏀 Nouveau Match</div>
       <div className="form-grid">
-        <div className="form-group">
-          <label>Équipe A (domicile)</label>
-          <input value={form.teamA} onChange={e => set('teamA', e.target.value)} />
-        </div>
-        <div className="form-group">
-          <label>Équipe B (visiteur)</label>
-          <input value={form.teamB} onChange={e => set('teamB', e.target.value)} placeholder="Adversaire..." autoFocus />
-        </div>
-        <div className="form-group">
-          <label>Score A</label>
-          <input type="number" value={form.scoreA} onChange={e => set('scoreA', e.target.value)} placeholder="0" min="0" />
-        </div>
-        <div className="form-group">
-          <label>Score B</label>
-          <input type="number" value={form.scoreB} onChange={e => set('scoreB', e.target.value)} placeholder="0" min="0" />
-        </div>
-        <div className="form-group">
-          <label>Date</label>
-          <input type="date" value={form.date} onChange={e => set('date', e.target.value)} />
-        </div>
-        <div className="form-group">
-          <label>Lieu</label>
-          <input value={form.lieu} onChange={e => set('lieu', e.target.value)} placeholder="Salle..." />
-        </div>
+        <div className="form-group full"><label>Équipe domicile</label><input value={form.teamA} onChange={e => set('teamA', e.target.value)} placeholder="Votre équipe" autoFocus /></div>
+        <div className="form-group full"><label>Équipe visiteur</label><input value={form.teamB} onChange={e => set('teamB', e.target.value)} placeholder="Adversaire" /></div>
+        <div className="form-group"><label>Score domicile</label><input type="number" value={form.scoreA} onChange={e => set('scoreA', e.target.value)} placeholder="0" min="0" /></div>
+        <div className="form-group"><label>Score visiteur</label><input type="number" value={form.scoreB} onChange={e => set('scoreB', e.target.value)} placeholder="0" min="0" /></div>
+        <div className="form-group"><label>Date</label><input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></div>
+        <div className="form-group"><label>Lieu</label><input value={form.lieu} onChange={e => set('lieu', e.target.value)} placeholder="Salle..." /></div>
       </div>
       <div className="form-actions">
         <button className="btn btn-ghost" onClick={closeModal}>Annuler</button>
-        <button className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Enregistrement...' : 'Enregistrer'}
-        </button>
+        <button className="btn btn-primary" onClick={submit} disabled={loading}>{loading ? 'Enregistrement...' : 'Enregistrer'}</button>
       </div>
     </>
   )

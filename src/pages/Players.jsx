@@ -7,10 +7,10 @@ import Avatar from '../components/ui/Avatar'
 import { db } from '../db/db'
 
 export default function Players() {
-  const { openModal }  = useUIStore()
-  const { show }       = useToastStore()
-  const players        = usePlayers()
-  const allStats       = useAllStats()
+  const { openModal } = useUIStore()
+  const { show }      = useToastStore()
+  const players       = usePlayers()
+  const allStats      = useAllStats()
 
   const playersWithAvg = useMemo(() =>
     players.map(p => ({
@@ -57,7 +57,7 @@ export default function Players() {
           </div>
         ) : (
           <motion.div
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}
+            className="grid-3"
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
@@ -66,7 +66,10 @@ export default function Players() {
               <motion.div
                 key={p.id}
                 className="card"
-                variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+                variants={{
+                  hidden:   { opacity: 0, y: 16 },
+                  visible:  { opacity: 1, y: 0  },
+                }}
                 whileHover={{ y: -2, transition: { duration: .15 } }}
                 style={{ position: 'relative' }}
               >
@@ -74,7 +77,7 @@ export default function Players() {
                 <div style={{
                   position: 'absolute', top: 0, left: 0, right: 0, height: 3,
                   background: p.color,
-                  borderRadius: '10px 10px 0 0',
+                  borderRadius: 'var(--radius) var(--radius) 0 0',
                 }} />
 
                 <div className="card-body">
@@ -96,7 +99,7 @@ export default function Players() {
                     </div>
                     <button
                       className="btn btn-danger btn-sm"
-                      style={{ padding: '6px 8px', flexShrink: 0 }}
+                      style={{ padding: '7px 8px', flexShrink: 0 }}
                       onClick={() => handleDelete(p)}
                       title="Supprimer"
                     >
@@ -104,7 +107,7 @@ export default function Players() {
                     </button>
                   </div>
 
-                  {/* Stats grid */}
+                  {/* Stats */}
                   {p.avg ? (
                     <>
                       <div style={{
@@ -114,9 +117,9 @@ export default function Players() {
                       }}>
                         {[
                           { v: p.avg.points,   l: 'PTS', hi: true },
-                          { v: p.avg.rebounds, l: 'REB' },
-                          { v: p.avg.assists,  l: 'AST' },
-                          { v: p.avg.games,    l: 'MAT' },
+                          { v: p.avg.rebounds, l: 'REB'           },
+                          { v: p.avg.assists,  l: 'AST'           },
+                          { v: p.avg.games,    l: 'MAT'           },
                         ].map(({ v, l, hi }) => (
                           <div key={l}>
                             <div style={{
@@ -126,7 +129,10 @@ export default function Players() {
                             }}>
                               {v}
                             </div>
-                            <div style={{ fontSize: 9, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: 1 }}>
+                            <div style={{
+                              fontSize: 9, color: 'var(--muted)',
+                              textTransform: 'uppercase', letterSpacing: 1,
+                            }}>
                               {l}
                             </div>
                           </div>

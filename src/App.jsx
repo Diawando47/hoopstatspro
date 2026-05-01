@@ -1,8 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUIStore } from './store/useStore'
 
 import Sidebar    from './components/layout/Sidebar'
+import BottomNav  from './components/layout/BottomNav'
 import Toast      from './components/ui/Toast'
 import Modal      from './components/ui/Modal'
 import MatchForm  from './components/match/MatchForm'
@@ -16,8 +17,23 @@ import Players     from './pages/Players'
 import Stats       from './pages/Stats'
 import Reports     from './pages/Reports'
 
+// ── Hook : détecte si on est sur mobile ───────────────
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 769)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  return isMobile
+}
+
+// ── Modal router ───────────────────────────────────────
 function ModalRouter() {
-  const { modal, closeModal } = useUIStore()
+  const { modal } = useUIStore()
   if (!modal) return null
 
   const forms = {
@@ -26,15 +42,14 @@ function ModalRouter() {
     stat:   <StatForm />,
   }
 
-  return (
-    <Modal>
-      {forms[modal.type] ?? null}
-    </Modal>
-  )
+  return <Modal>{forms[modal.type] ?? null}</Modal>
 }
 
+// ── App ────────────────────────────────────────────────
 export default function App() {
-  // PWA install prompt — capture l'événement natif du navigateur
+  const isMobile = useIsMobile()
+
+  // Capture l'événement PWA "Ajouter à l'écran d'accueil"
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault()
@@ -46,7 +61,10 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      <Sidebar />
+      {/* Sidebar : desktop seulement */}
+      {!isMobile && <Sidebar />}
+
+      {/* Contenu principal */}
       <main className="main-content">
         <Routes>
           <Route path="/"            element={<Dashboard />} />
@@ -57,6 +75,11 @@ export default function App() {
           <Route path="/reports"     element={<Reports />} />
         </Routes>
       </main>
+
+      {/* Bottom nav : mobile seulement */}
+      {isMobile && <BottomNav />}
+
+      {/* Globaux */}
       <ModalRouter />
       <Toast />
     </div>

@@ -11,7 +11,7 @@ export default defineConfig({
       manifest: {
         name: 'HoopStats Pro',
         short_name: 'HoopStats',
-        description: 'Application de gestion et statistiques basketball',
+        description: 'Analyse de performance basketball pour clubs',
         theme_color: '#ff6b2b',
         background_color: '#0a0a0c',
         display: 'standalone',
@@ -19,9 +19,12 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ],
+        screenshots: [
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', form_factor: 'narrow' }
         ]
       },
       workbox: {
@@ -30,15 +33,26 @@ export default defineConfig({
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
-            options: { cacheName: 'google-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } }
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
+            }
           },
           {
             urlPattern: /^https:\/\/api\.anthropic\.com\/.*/i,
-            handler: 'NetworkFirst',
-            options: { cacheName: 'api-cache', networkTimeoutSeconds: 10 }
+            handler: 'NetworkOnly'
           }
         ]
-      }
+      },
+      devOptions: { enabled: false }
     })
   ]
 })
