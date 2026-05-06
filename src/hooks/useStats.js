@@ -31,6 +31,7 @@ export function calcPlayerAvg(stats) {
 }
 
 export function getResult(match) {
+  if (!match) return 'N'
   if (match.scoreA > match.scoreB) return 'V'
   if (match.scoreA < match.scoreB) return 'D'
   return 'N'
@@ -80,4 +81,11 @@ export function usePlayerStats(playerId) {
     [playerId],
     []
   )
+}
+
+// ✅ Bug 6 — distingue "Dexie charge" de "base vraiment vide"
+// Sans defaultValue, useLiveQuery retourne undefined pendant le chargement
+export function useIsReady() {
+  const result = useLiveQuery(() => db.matches.count(), [])
+  return result !== undefined
 }

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { useUIStore } from '../store/useStore'
 import {
-  useMatches, usePlayers, useAllStats,
+  useMatches, usePlayers, useAllStats, useIsReady,
   calcRecord, calcPlayerAvg, getMVP,
   getResult, formatDate,
 } from '../hooks/useStats'
@@ -24,6 +24,15 @@ export default function Dashboard() {
   const matches       = useMatches()
   const players       = usePlayers()
   const allStats      = useAllStats()
+  const isReady       = useIsReady()
+
+  // ✅ Bug 6 corrigé — affiche loader pendant que Dexie charge, pas l'état vide
+  if (!isReady) return (
+    <div className="content" style={{ textAlign: 'center', paddingTop: 80, color: 'var(--muted)' }}>
+      <div style={{ fontSize: 36, marginBottom: 12 }}>🏀</div>
+      <div>Chargement...</div>
+    </div>
+  )
 
   const record  = useMemo(() => calcRecord(matches), [matches])
   const avgPts  = useMemo(() =>

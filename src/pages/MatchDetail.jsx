@@ -16,13 +16,29 @@ export default function MatchDetail() {
   const { openModal } = useUIStore()
 
   const matchId = parseInt(id)
-  const match   = useLiveQuery(() => db.matches.get(matchId), [matchId])
-  const players = usePlayers()
-  const stats   = useMatchStats(matchId)
 
-  if (!match) return (
+  // ✅ Bug 3 corrigé — guard contre NaN et match introuvable
+  const match   = useLiveQuery(
+    () => isNaN(matchId) ? Promise.resolve(null) : db.matches.get(matchId),
+    [matchId]
+  )
+  const players = usePlayers()
+  const stats   = useMatchStats(isNaN(matchId) ? null : matchId)
+
+  // undefined = Dexie charge encore | null = introuvable
+  if (match === undefined) return (
     <div className="content" style={{ textAlign: 'center', paddingTop: 80, color: 'var(--muted)' }}>
       Chargement...
+    </div>
+  )
+
+  if (match === null) return (
+    <div className="content" style={{ textAlign: 'center', paddingTop: 80 }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>🏀</div>
+      <div style={{ color: 'var(--text)', fontWeight: 600, marginBottom: 6 }}>Match introuvable</div>
+      <button className="btn btn-ghost" onClick={() => navigate('/matches')}>
+        ← Retour aux matchs
+      </button>
     </div>
   )
 

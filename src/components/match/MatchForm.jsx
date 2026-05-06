@@ -7,7 +7,8 @@ export default function MatchForm() {
   const { closeModal } = useUIStore()
   const { show }       = useToastStore()
   const [form, setForm] = useState({
-    teamA: '', teamB: '', scoreA: '', scoreB: '',
+    teamA: localStorage.getItem('hoopstats_teamname') || '',
+    teamB: '', scoreA: '', scoreB: '',
     date: format(new Date(), 'yyyy-MM-dd'), lieu: '',
   })
   const [loading, setLoading] = useState(false)
@@ -16,15 +17,23 @@ export default function MatchForm() {
   async function submit() {
     if (!form.teamA.trim() || !form.teamB.trim()) { alert("Renseignez les deux équipes"); return }
     setLoading(true)
-    await db.matches.add({
-      teamA:  form.teamA.trim(),
-      teamB:  form.teamB.trim(),
-      scoreA: parseInt(form.scoreA) || 0,
-      scoreB: parseInt(form.scoreB) || 0,
-      date:   form.date,
-      lieu:   form.lieu.trim() || 'Salle locale',
-    })
-    setLoading(false); closeModal(); show('✅ Match enregistré !')
+    try {
+      localStorage.setItem('hoopstats_teamname', form.teamA.trim())
+      await db.matches.add({
+        teamA:  form.teamA.trim(),
+        teamB:  form.teamB.trim(),
+        scoreA: parseInt(form.scoreA) || 0,
+        scoreB: parseInt(form.scoreB) || 0,
+        date:   form.date,
+        lieu:   form.lieu.trim() || 'Salle locale',
+      })
+      closeModal()
+      show('✅ Match enregistré !')
+    } catch (err) {
+      alert(`Erreur : ${err.message}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

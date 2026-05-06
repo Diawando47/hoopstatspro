@@ -14,15 +14,22 @@ export default function PlayerForm() {
   async function submit() {
     if (!form.name.trim()) { alert('Renseignez le nom du joueur'); return }
     setLoading(true)
-    const count = await db.players.count()
-    await db.players.add({
-      name:   form.name.trim(),
-      number: parseInt(form.number) || 0,
-      pos:    form.pos,
-      team:   form.team.trim() || 'Mon Équipe',
-      color:  COLORS[count % COLORS.length],
-    })
-    setLoading(false); closeModal(); show('✅ Joueur ajouté !')
+    try {
+      const count = await db.players.count()
+      await db.players.add({
+        name:   form.name.trim(),
+        number: parseInt(form.number) || 0,
+        pos:    form.pos,
+        team:   form.team.trim() || 'Mon Équipe',
+        color:  COLORS[count % COLORS.length],
+      })
+      closeModal()
+      show('✅ Joueur ajouté !')
+    } catch (err) {
+      alert(`Erreur : ${err.message}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

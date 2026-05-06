@@ -3,6 +3,72 @@
 Application PWA de gestion et d'analyse de performances basketball pour clubs.
 
 ## Stack
+- **React 18** + Vite + **vite-plugin-pwa**
+- **Zustand** — state management
+- **Dexie.js** — IndexedDB (100% offline)
+- **Framer Motion** — animations
+- **Gemini Flash 2.0** — rapports IA intelligents
+
+## Installation
+
+```bash
+# 1. Installer les dépendances
+npm install
+
+# 2. Configurer la clé API Gemini (gratuite)
+cp .env.example .env
+# Éditez .env et ajoutez votre clé depuis https://aistudio.google.com/apikey
+
+# 3. Lancer en dev
+npm run dev
+```
+
+## Build production (PWA)
+
+```bash
+npm run build
+npm run preview
+```
+
+## Clé API Gemini
+
+1. Allez sur https://aistudio.google.com/apikey
+2. Cliquez **"Create API Key"** (gratuit, 15 req/min)
+3. Copiez la clé dans votre fichier `.env` :
+   ```
+   VITE_GEMINI_API_KEY=AIza...
+   ```
+4. Sur Vercel : ajoutez la variable dans **Settings → Environment Variables**
+
+## Structure
+
+```
+src/
+├── pages/          Dashboard, Matches, MatchDetail, Players, Stats, Reports, NotFound
+├── components/     Sidebar (desktop), BottomNav (mobile), Modal, Toast, Avatar...
+├── hooks/          useStats.js  — helpers métier + live queries Dexie
+├── store/          useStore.js  — Zustand (UI, Toast, Reports)
+├── services/       geminiApi.js — Gemini Flash 2.0 + prompt builders
+├── db/             db.js        — Dexie schema
+└── styles/         globals.css  — design system dark theme orange
+```
+
+## Navigation adaptative
+
+- **Mobile** → Bottom Navigation Bar + FAB central pour créer un match
+- **Desktop** → Sidebar collapsible avec raccourcis
+
+## Bugs corrigés (v1.1)
+
+- StatForm : race condition avec Dexie au premier render
+- MatchDetail : crash sur URL invalide (NaN matchId)
+- Reports : spinner bloqué sur erreur API (finally manquant)
+- Sidebar : 100vh → 100dvh (Safari mobile)
+- Route 404 ajoutée
+
+Application PWA de gestion et d'analyse de performances basketball pour clubs.
+
+## Stack
 - **React 18** + Vite
 - **Zustand** — state management
 - **Dexie.js** — IndexedDB (100% offline)

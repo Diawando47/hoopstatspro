@@ -469,9 +469,14 @@ select option { background: var(--panel); }
 .spark-bar { flex: 1; min-width: 8px; border-radius: 2px 2px 0 0; transition: background .2s; }
 
 /* ── RESPONSIVE GRIDS ─────────────────────────────────── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; }
+
+/* Tablette (iPad portrait) */
+@media (max-width: 1024px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
 
 @media (max-width: 768px) {
   .grid-2  { grid-template-columns: 1fr; }
@@ -480,4 +485,18 @@ select option { background: var(--panel); }
 }
 @media (max-width: 480px) {
   .grid-3  { grid-template-columns: 1fr; }
+}
+
+/* ── LOGO ORBITE — animations ─────────────────────────── */
+.logo-orbit-dot {
+  transform-origin: 32px 32px;
+  animation: orbitSpin 6s linear infinite;
+}
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.logo-ring-dash {
+  transform-origin: 32px 32px;
+  animation: orbitSpin 12s linear infinite reverse;
 }

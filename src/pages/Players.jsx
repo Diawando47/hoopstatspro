@@ -22,9 +22,13 @@ export default function Players() {
 
   async function handleDelete(p) {
     if (!confirm(`Supprimer ${p.name} ? Ses statistiques seront aussi supprimées.`)) return
-    await db.stats.where('playerId').equals(p.id).delete()
-    await db.players.delete(p.id)
-    show(`🗑️ ${p.name} supprimé`)
+    try {
+      await db.stats.where('playerId').equals(p.id).delete()
+      await db.players.delete(p.id)
+      show(`🗑️ ${p.name} supprimé`)
+    } catch (err) {
+      alert(`Erreur lors de la suppression : ${err.message}`)
+    }
   }
 
   return (

@@ -38,7 +38,15 @@ export default function BottomNav() {
         className="bottom-nav-item"
         style={{ flex: 'none', padding: '0 8px' }}
       >
-        <div className="fab" onClick={() => openModal('match')}>+</div>
+        {/* ✅ Bug 5 corrigé — button natif évite le double event tap/click sur mobile */}
+        <button
+          className="fab"
+          onClick={openModal.bind(null, 'match')}
+          aria-label="Nouveau match"
+          style={{ border: 'none', cursor: 'pointer' }}
+        >
+          +
+        </button>
       </div>
 
       {/* Item 3 + 4 */}

@@ -4,6 +4,7 @@ import { useUIStore } from './store/useStore'
 
 import Sidebar    from './components/layout/Sidebar'
 import BottomNav  from './components/layout/BottomNav'
+import TopBar     from './components/layout/TopBar'
 import Toast      from './components/ui/Toast'
 import Modal      from './components/ui/Modal'
 import MatchForm  from './components/match/MatchForm'
@@ -16,13 +17,15 @@ import MatchDetail from './pages/MatchDetail'
 import Players     from './pages/Players'
 import Stats       from './pages/Stats'
 import Reports     from './pages/Reports'
+import NotFound    from './pages/NotFound'
 
 // ── Hook : détecte si on est sur mobile ───────────────
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 769)
+  // ✅ Bug 4 corrigé — matchMedia pour la valeur initiale, cohérent avec le listener
+  const mq = window.matchMedia('(max-width: 768px)')
+  const [isMobile, setIsMobile] = useState(() => mq.matches)
 
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 768px)')
     const handler = (e) => setIsMobile(e.matches)
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
@@ -66,6 +69,8 @@ export default function App() {
 
       {/* Contenu principal */}
       <main className="main-content">
+        {/* TopBar logo — mobile seulement */}
+        {isMobile && <TopBar />}
         <Routes>
           <Route path="/"            element={<Dashboard />} />
           <Route path="/matches"     element={<Matches />} />
@@ -73,6 +78,7 @@ export default function App() {
           <Route path="/players"     element={<Players />} />
           <Route path="/stats"       element={<Stats />} />
           <Route path="/reports"     element={<Reports />} />
+          <Route path="*"            element={<NotFound />} />
         </Routes>
       </main>
 
